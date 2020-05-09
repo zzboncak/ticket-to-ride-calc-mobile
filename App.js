@@ -3,7 +3,21 @@ import { StyleSheet, Text, View, Button, TouchableOpacity, PushNotificationIOS }
 
 export default function App() {
   const [totalScore, setTotalScore] = useState(0);
-  const [scoreHistory, setScoreHistory] = useState([]);
+  const [scoreHistory, setScoreHistory] = useState([0]);
+
+  const routeValues = {
+    1: 1,
+    2: 2,
+    3: 4,
+    4: 7,
+    5: 10,
+    6: 15
+  };
+
+  const updateScore = (route) => {
+    setScoreHistory(scoreHistory.push(routeValues[route]));
+    setTotalScore(scoreHistory.reduce((a, b) => a + b));
+  }
 
   return (
     <View style={styles.container}>
