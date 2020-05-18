@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Button, TouchableOpacity, PushNotificationIOS } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
 export default function App() {
   const [totalScore, setTotalScore] = useState(0);
-  const [scoreHistory, setScoreHistory] = useState([0]);
+  const [scoreHistory, setScoreHistory] = useState([]);
 
   const routeValues = {
     1: 1,
@@ -15,9 +15,30 @@ export default function App() {
   };
 
   const updateScore = (route) => {
-    setScoreHistory(scoreHistory.push(routeValues[route]));
-    setTotalScore(scoreHistory.reduce((a, b) => a + b));
+    let newScoreHistory = scoreHistory.concat(routeValues[route]);
+    let total = newScoreHistory.reduce((a, b) => a + b);
+    setTotalScore(total);
+    setScoreHistory(newScoreHistory);
   }
+
+  const undoRoute = () => {
+    let newScoreHistory = scoreHistory.slice(0, -1);
+    if (newScoreHistory.length === 0) {
+      setTotalScore(0);
+      setScoreHistory(newScoreHistory);
+    } else {
+      let total = newScoreHistory.reduce((a, b) => a + b);
+      setTotalScore(total);
+      setScoreHistory(newScoreHistory);
+    }
+  }
+
+  const clearScore = () => {
+    setTotalScore(0);
+    setScoreHistory([]);
+  }
+
+  let scoreHistoryText = scoreHistory.join(", ");
 
   return (
     <View style={styles.container}>
@@ -25,13 +46,14 @@ export default function App() {
           <View>
             <Text style={styles.scoreText}>Total Score: </Text>
             <Text style={styles.scoreText}>{totalScore}</Text>
+            <Text>{scoreHistoryText}</Text>
           </View>
 
         <Text id="routes-history"></Text>
 
         <View style={styles.editButtons}>
             <TouchableOpacity 
-              onPress={() => setTotalScore(0)}
+              onPress={() => clearScore()}
               style={styles.button}
             >
                 <Text style={styles.buttonText}>Clear Score</Text>
@@ -39,6 +61,8 @@ export default function App() {
     
             <TouchableOpacity
               style={styles.button}
+              onPress={() => undoRoute()}
+              disabled={scoreHistory.length === 0}
             >
               <Text style={styles.buttonText}>Undo</Text>
             </TouchableOpacity>
@@ -48,34 +72,34 @@ export default function App() {
             <View style={styles.calcRow}>
                 <TouchableOpacity 
                   style={styles.button}
-                  onPress={() => setTotalScore(totalScore + 1)}>
+                  onPress={() => updateScore(1)}>
                     <Text style={styles.buttonText}>1</Text>
                 </TouchableOpacity>
                 <TouchableOpacity 
                   style={styles.button}
-                  onPress={() => setTotalScore(totalScore + 2)}>
+                  onPress={() => updateScore(2)}>
                     <Text style={styles.buttonText}>2</Text>
                 </TouchableOpacity>
                 <TouchableOpacity 
                   style={styles.button}
-                  onPress={() => setTotalScore(totalScore + 4)}>
+                  onPress={() => updateScore(3)}>
                     <Text style={styles.buttonText}>3</Text>
                 </TouchableOpacity>
             </View>
             <View style={styles.calcRow}>
                 <TouchableOpacity 
                   style={styles.button}
-                  onPress={() => setTotalScore(totalScore + 7)}>
+                  onPress={() => updateScore(4)}>
                     <Text style={styles.buttonText}>4</Text>
                   </TouchableOpacity>
                 <TouchableOpacity 
                   style={styles.button}
-                  onPress={() => setTotalScore(totalScore + 10)}>
+                  onPress={() => updateScore(5)}>
                     <Text style={styles.buttonText}>5</Text>
                   </TouchableOpacity>
                 <TouchableOpacity 
                   style={styles.button}
-                  onPress={() => setTotalScore(totalScore + 15)}>
+                  onPress={() => updateScore(6)}>
                     <Text style={styles.buttonText}>6</Text>
                   </TouchableOpacity>
             </View>
